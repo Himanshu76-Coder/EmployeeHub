@@ -1,0 +1,100 @@
+############################
+# GENERAL
+############################
+
+# Logs
+*.log
+logs/
+*.out
+
+# Runtime files
+*.pid
+*.seed
+*.pid.lock
+
+# Environment files (may contain secrets)
+.env
+.env.*
+!.env.example
+
+############################
+# IDE FILES
+############################
+
+.vscode/
+.idea/
+*.iml
+
+############################
+# OS FILES
+############################
+
+.DS_Store
+Thumbs.db
+
+############################
+# BACKEND (SPRING BOOT / MAVEN)
+############################
+
+# Maven build folder
+employee-management-backend/target/
+
+# Compiled files
+*.class
+
+# Maven wrapper jar (keep scripts but ignore jar)
+!.mvn/wrapper/maven-wrapper.properties
+
+############################
+# FRONTEND (REACT / VITE)
+############################
+
+# Dependencies
+employee-management-frontend/node_modules/
+
+# Build output
+employee-management-frontend/dist/
+employee-management-frontend/build/
+
+# Vite cache
+employee-management-frontend/.vite/
+
+############################
+# PACKAGE MANAGER
+############################
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+############################
+# TEST OUTPUT
+############################
+
+coverage/
+test-output/
+
+############################
+# OPTIONAL SECURITY
+############################
+
+# Secrets
+*.key
+*.pem
+*.crt
+
+############################
+# OPTIONAL DATABASE FILES
+############################
+
+*.db
+*.sqlite
+
+############################
+# OPTIONAL TEMP FILES
+############################
+
+tmp/
+temp/
+.cache/

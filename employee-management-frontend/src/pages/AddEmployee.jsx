@@ -1,0 +1,106 @@
+// Form page for adding new employee records
+import { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import employeeService from '../api/employeeService';
+
+const AddEmployee = () => {
+  const navigate = useNavigate();
+  const [employee, setEmployee] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    department: '',
+    designation: '',
+    phoneNumber: '',
+    salary: ''
+  });
+  const [error, setError] = useState('');
+
+  // Handle input field changes
+  const handleChange = (e) => {
+    setEmployee({ ...employee, [e.target.name]: e.target.value });
+  };
+
+  // Submit form and create employee
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    employeeService.createEmployee(employee)
+      .then(() => {
+        navigate('/employees');
+      })
+      .catch(error => {
+        console.error('Error creating employee:', error);
+        // Handle different error response formats
+        if (error.response && error.response.data && error.response.data.message) {
+            setError(error.response.data.message);
+        } else if (error.response && error.response.data) {
+             const validationErrors = Object.values(error.response.data).join(', ');
+             setError(validationErrors || 'Failed to add employee. Please check inputs.');
+        } else {
+             setError('Network Error. Is the backend running?');
+        }
+      });
+  };
+
+  return (
+    <div className="container" style={{ paddingTop: '2.5rem', paddingBottom: '3rem' }}>
+      {/* Page header */}
+      <div style={{ marginBottom: '1.5rem' }}>
+        <h2 style={{ fontSize: '1.8rem', color: 'var(--text-primary)' }}>Add New Employee</h2>
+        <p style={{ color: 'var(--text-secondary)' }}>Enter the details of the new team member.</p>
+      </div>
+      
+      {/* Error message display */}
+      {error && <div style={{ color: 'var(--danger-color)', marginBottom: '1.5rem', padding: '1rem', backgroundColor: '#fee2e2', borderRadius: 'var(--radius-md)', border: '1px solid #fca5a5' }}>{error}</div>}
+
+      {/* Employee form */}
+      <form onSubmit={handleSubmit} className="card" style={{ padding: '2.5rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+          <div className="form-group">
+            <label>First Name</label>
+            <input type="text" name="firstName" className="form-control" value={employee.firstName} onChange={handleChange} required placeholder="e.g. John" />
+          </div>
+          <div className="form-group">
+            <label>Last Name</label>
+            <input type="text" name="lastName" className="form-control" value={employee.lastName} onChange={handleChange} required placeholder="e.g. Doe" />
+          </div>
+        </div>
+
+        <div className="form-group">
+          <label>Email Address</label>
+          <input type="email" name="email" className="form-control" value={employee.email} onChange={handleChange} required placeholder="john.doe@company.com" />
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+          <div className="form-group">
+            <label>Department</label>
+            <input type="text" name="department" className="form-control" value={employee.department} onChange={handleChange} required placeholder="e.g. Engineering" />
+          </div>
+          <div className="form-group">
+            <label>Designation</label>
+            <input type="text" name="designation" className="form-control" value={employee.designation} onChange={handleChange} required placeholder="e.g. Software Engineer" />
+          </div>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+          <div className="form-group">
+            <label>Phone Number (Optional)</label>
+            <input type="text" name="phoneNumber" className="form-control" value={employee.phoneNumber} onChange={handleChange} placeholder="e.g. +91 98765 43210" />
+          </div>
+          <div className="form-group">
+            <label>Salary (Annual ₹)</label>
+            <input type="number" name="salary" className="form-control" value={employee.salary} onChange={handleChange} required placeholder="e.g. 800000" />
+          </div>
+        </div>
+
+        {/* Form actions */}
+        <div style={{ display: 'flex', gap: '1rem', paddingTop: '1rem', marginTop: '1rem', borderTop: '1px solid var(--border-color)' }}>
+          <button type="submit" className="btn btn-primary" style={{ padding: '0.75rem 2rem' }}>Save Employee</button>
+          <Link to="/employees" className="btn btn-secondary">Cancel</Link>
+        </div>
+      </form>
+    </div>
+  );
+};
+
+export default AddEmployee;
