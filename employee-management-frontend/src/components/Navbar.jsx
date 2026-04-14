@@ -1,49 +1,116 @@
-// Navigation bar component with fixed positioning and routing links
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 
 const Navbar = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [query, setQuery] = useState('');
+
+  // Sync input with URL param when route changes
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    setQuery(params.get('q') || '');
+  }, [location]);
+
+  const handleChange = (e) => {
+    const value = e.target.value;
+    setQuery(value);
+    if (value.trim()) {
+      navigate(`/employees?q=${encodeURIComponent(value.trim())}`);
+    } else {
+      navigate('/employees');
+    }
+  };
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+  };
+
   return (
-    <nav style={{ 
+    <header style={{
       position: 'fixed',
       top: 0,
-      left: 0,
-      right: 0,
-      zIndex: 1000,
-      backgroundColor: 'rgb(0, 55, 70)',
-      borderBottom: '1px solid rgb(0, 55, 70)',
-      boxShadow: 'var(--shadow-sm)',
-      padding: '1rem 0'
+      width: '100%',
+      backgroundColor: '#ffffff',
+      zIndex: 50,
+      boxShadow: '0 1px 3px 0 rgba(0,0,0,0.05)',
     }}>
-      <div style={{ 
-        width: '90%',
-        maxWidth: '1200px',
-        margin: '0 auto',
-        display: 'flex', 
-        justifyContent: 'space-between', 
+      <div className="container" style={{
+        display: 'flex',
         alignItems: 'center',
-        height: '48px'
+        justifyContent: 'space-between',
+        height: '64px',
       }}>
-        {/* Logo and brand name */}
-        <Link to="/" style={{ 
-          fontSize: '1.5rem', 
-          fontWeight: '700', 
-          color: 'white',
-          letterSpacing: '-0.02em',
+
+        {/* Brand */}
+        <Link to="/" style={{
+          fontFamily: 'Manrope, sans-serif',
+          fontSize: '1.5rem',
+          fontWeight: 800,
+          color: '#005d52',
+          letterSpacing: '-0.04em',
+          textDecoration: 'none',
+          flexShrink: 0,
+        }}>
+          EmployeeManagement
+        </Link>
+
+        {/* Search Bar */}
+        <form onSubmit={handleSearch} style={{
           display: 'flex',
           alignItems: 'center',
-          gap: '0.6rem',
-          flexShrink: 0
+          gap: '0.75rem',
+          backgroundColor: '#e7e8e9',
+          padding: '0.375rem 1rem',
+          borderRadius: '0.5rem',
+          width: '256px',
+          border: '1px solid rgba(189,201,197,0.20)',
         }}>
-          <span style={{ backgroundColor: 'var(--primary-color)', color: 'white', borderRadius: '4px', padding: '0.2rem 0.5rem', fontSize: '1.2rem' }}>EM</span> EmployeeManagement
+          <span className="material-symbols-outlined" style={{
+            fontSize: '1.125rem',
+            color: '#6e7976',
+            userSelect: 'none',
+          }}>search</span>
+          <input
+            type="text"
+            placeholder="Search Employee..."
+            value={query}
+            onChange={handleChange}
+            style={{
+              background: 'transparent',
+              border: 'none',
+              outline: 'none',
+              fontSize: '0.875rem',
+              color: '#3e4946',
+              width: '100%',
+              fontFamily: 'Inter, sans-serif',
+            }}
+          />
+        </form>
+
+        {/* Nav Links */}
+        <nav style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
+          <Link
+            to="/"
+            style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 600, fontSize: '0.875rem', color: '#54606c', letterSpacing: '-0.01em', transition: 'color 0.2s' }}
+            onMouseEnter={(e) => e.target.style.color = '#005d52'}
+            onMouseLeave={(e) => e.target.style.color = '#54606c'}
+          >Home</Link>
+          <Link
+            to="/employees"
+            style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 600, fontSize: '0.875rem', color: '#54606c', letterSpacing: '-0.01em', transition: 'color 0.2s' }}
+            onMouseEnter={(e) => e.target.style.color = '#005d52'}
+            onMouseLeave={(e) => e.target.style.color = '#54606c'}
+          >Employees</Link>
+        </nav>
+
+        {/* CTA */}
+        <Link to="/employees/add" className="btn btn-primary" style={{ padding: '0.5rem 1.5rem' }}>
+          +&nbsp; New
         </Link>
-        {/* Navigation links */}
-        <div style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
-          <Link to="/" className="navbar-link">Home</Link>
-          <Link to="/employees" className="navbar-link">Employees</Link>
-          <Link to="/employees/add" className="btn btn-primary" style={{ padding: '0.55rem 1.25rem' }}>+ New</Link>
-        </div>
+
       </div>
-    </nav>
+    </header>
   );
 };
 

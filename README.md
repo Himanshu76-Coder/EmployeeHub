@@ -24,7 +24,7 @@ This project showcases a clean, scalable full-stack application with proper sepa
 
 ### Backend
 * **Java 17**
-* **Spring Boot 3.5.11**
+* **Spring Boot 3.5.13**
   * Spring Web
   * Spring Data JPA
   * Spring Security

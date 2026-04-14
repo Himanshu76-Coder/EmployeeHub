@@ -1,6 +1,6 @@
 // Employee list page with table view and delete functionality
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import employeeService from '../api/employeeService';
 import ConfirmModal from '../components/ConfirmModal';
 
@@ -9,6 +9,23 @@ const EmployeeList = () => {
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedEmpId, setSelectedEmpId] = useState(null);
+  const [searchParams] = useSearchParams();
+  const query = searchParams.get('q') || '';
+
+  // Derive filtered list from query — case-insensitive partial match
+  const filteredEmployees = query.trim()
+    ? employees.filter(emp => {
+        const q = query.toLowerCase();
+        return (
+          emp.firstName?.toLowerCase().includes(q) ||
+          emp.lastName?.toLowerCase().includes(q) ||
+          `${emp.firstName} ${emp.lastName}`.toLowerCase().includes(q) ||
+          emp.email?.toLowerCase().includes(q) ||
+          emp.department?.toLowerCase().includes(q) ||
+          emp.designation?.toLowerCase().includes(q)
+        );
+      })
+    : employees;
 
   // Fetch employees on component mount
   useEffect(() => {
@@ -58,7 +75,7 @@ const EmployeeList = () => {
   if (loading) return <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-secondary)' }}>Loading employee data...</div>;
 
   return (
-    <div className="container" style={{ paddingTop: '2.5rem', paddingBottom: '3rem', minHeight: 'calc(100vh - 80px)' }}>
+    <div className="container" style={{ paddingTop: '2.5rem', paddingBottom: '3rem', minHeight: 'calc(100vh - 64px)' }}>
       {/* Page header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '1.5rem' }}>
         <div>
@@ -84,7 +101,7 @@ const EmployeeList = () => {
               </tr>
             </thead>
             <tbody>
-              {employees.map(emp => (
+              {filteredEmployees.map(emp => (
                 <tr key={emp.employeeId}>
                   <td>
                     <div style={{ fontWeight: '500', color: 'var(--text-primary)' }}>{emp.firstName} {emp.lastName}</div>
@@ -104,11 +121,13 @@ const EmployeeList = () => {
                 </tr>
               ))}
               {/* Empty state */}
-              {employees.length === 0 && (
+              {filteredEmployees.length === 0 && (
                 <tr>
                   <td colSpan="5" style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-secondary)' }}>
-                    <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>📭</div>
-                    No employees found. Add some to get started.
+                    <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>{query ? '🔍' : '📭'}</div>
+                    {query
+                      ? `No employees found matching "${query}".`
+                      : 'No employees found. Add some to get started.'}
                   </td>
                 </tr>
               )}

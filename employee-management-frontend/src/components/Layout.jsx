@@ -7,7 +7,7 @@ const Layout = () => {
     <>
       <Navbar />
       {/* Main content area with top padding to account for fixed navbar */}
-      <main style={{ paddingTop: '80px' }}>
+      <main style={{ paddingTop: '64px' }}>
         <Outlet />
       </main>
     </>
