@@ -22,13 +22,16 @@ public class EmployeeController {
     
     private final EmpService empService;
 
-    // GET /api/v1/employees - Retrieve paginated list of employees
+    // GET /api/v1/employees - Retrieve paginated list of employees with optional filters
     @GetMapping
     public ResponseEntity<ApiResponse<Page<EmployeeResponseDTO>>> getAllEmployees(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "employeeId") String sortBy) {
-        Page<EmployeeResponseDTO> employees = empService.readEmployees(page, size, sortBy);
+            @RequestParam(defaultValue = "employeeId") String sortBy,
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) Double minSalary,
+            @RequestParam(required = false) Double maxSalary) {
+        Page<EmployeeResponseDTO> employees = empService.readEmployees(page, size, sortBy, keyword, minSalary, maxSalary);
         return ResponseEntity.ok(new ApiResponse<>(true, "Employees fetched successfully", employees));
     }
     

@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import java.util.Optional;
+import org.springframework.lang.NonNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -51,17 +52,25 @@ public class EmployeeServiceTest {
         entity.setPhoneNumber("1234567890");
     }
 
+    // Helper to bypass IDE null-safety warnings on Mockito matchers for @NonNull arguments.
+    // Registers the Mockito matcher but returns a non-null instance to satisfy the compiler.
+    @NonNull
+    private EmpEntity anyEmpEntity() {
+        any(EmpEntity.class);
+        return new EmpEntity();
+    }
+
     @Test
     void createEmployee_ShouldReturnResponseDTO() {
         when(empRepository.existsByEmail(anyString())).thenReturn(false);
-        when(empRepository.save(any(EmpEntity.class))).thenReturn(entity);
+        when(empRepository.save(anyEmpEntity())).thenReturn(entity);
 
         EmployeeResponseDTO response = empService.createEmployee(requestDTO);
 
         assertNotNull(response);
         assertEquals("John", response.getFirstName());
         assertEquals("john.doe@example.com", response.getEmail());
-        verify(empRepository, times(1)).save(any(EmpEntity.class));
+        verify(empRepository, times(1)).save(anyEmpEntity());
     }
 
     @Test
@@ -69,7 +78,7 @@ public class EmployeeServiceTest {
         when(empRepository.existsByEmail(anyString())).thenReturn(true);
 
         assertThrows(IllegalArgumentException.class, () -> empService.createEmployee(requestDTO));
-        verify(empRepository, never()).save(any());
+        verify(empRepository, never()).save(anyEmpEntity());
     }
 
     @Test

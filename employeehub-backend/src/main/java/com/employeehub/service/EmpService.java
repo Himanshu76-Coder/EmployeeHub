@@ -11,8 +11,8 @@ public interface EmpService {
     // Create a new employee record
     EmployeeResponseDTO createEmployee(EmployeeRequestDTO dto);
 
-    // Retrieve paginated list of employees with sorting
-    Page<EmployeeResponseDTO> readEmployees(int page, int size, String sortBy);
+    // Retrieve paginated list of employees with sorting and filtering
+    Page<EmployeeResponseDTO> readEmployees(int page, int size, String sortBy, String keyword, Double minSalary, Double maxSalary);
 
     // Delete employee by ID
     void deleteEmployee(Long id);

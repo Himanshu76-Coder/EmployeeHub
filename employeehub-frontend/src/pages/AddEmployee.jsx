@@ -44,21 +44,22 @@ const AddEmployee = () => {
     <div className="container" style={{ paddingTop: '2.5rem', paddingBottom: '3rem' }}>
 
       {/* Page header */}
-      <div style={{ marginBottom: '1.5rem' }}>
-        <h2 style={{ fontSize: '1.8rem', color: 'var(--text-primary)' }}>Add New Employee</h2>
-        <p style={{ color: 'var(--text-secondary)' }}>Enter the details of the new team member.</p>
+      <div className="page-header">
+        <h2>Add New Employee</h2>
+        <p>Enter the details of the new team member.</p>
       </div>
 
       {/* Error message */}
       {error && (
-        <div style={{ color: 'var(--danger-color)', marginBottom: '1.5rem', padding: '1rem', backgroundColor: '#fee2e2', borderRadius: 'var(--radius-md)', border: '1px solid #fca5a5' }}>
+        <div className="alert-error">
+          <span className="material-symbols-outlined" style={{ fontSize: '1.125rem', flexShrink: 0 }}>error</span>
           {error}
         </div>
       )}
 
       {/* Employee form */}
-      <form onSubmit={handleSubmit} className="card" style={{ padding: '2.5rem' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+      <form onSubmit={handleSubmit} className="card" style={{ padding: '2rem 2.5rem 2.5rem' }}>
+        <div className="form-grid">
           <div className="form-group">
             <label>First Name</label>
             <input type="text" name="firstName" className="form-control" value={employee.firstName} onChange={handleChange} required placeholder="e.g. John" />
@@ -74,7 +75,7 @@ const AddEmployee = () => {
           <input type="email" name="email" className="form-control" value={employee.email} onChange={handleChange} required placeholder="john.doe@company.com" />
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+        <div className="form-grid">
           <div className="form-group">
             <label>Department</label>
             <input type="text" name="department" className="form-control" value={employee.department} onChange={handleChange} required placeholder="e.g. Engineering" />
@@ -85,9 +86,9 @@ const AddEmployee = () => {
           </div>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+        <div className="form-grid">
           <div className="form-group">
-            <label>Phone Number (Optional)</label>
+            <label>Phone Number <span style={{ fontWeight: 400, color: 'var(--outline-variant)' }}>(Optional)</span></label>
             <input type="text" name="phoneNumber" className="form-control" value={employee.phoneNumber} onChange={handleChange} placeholder="e.g. +91 98765 43210" />
           </div>
           <div className="form-group">
@@ -97,7 +98,7 @@ const AddEmployee = () => {
         </div>
 
         {/* Form actions */}
-        <div style={{ display: 'flex', gap: '1rem', paddingTop: '1rem', marginTop: '1rem', borderTop: '1px solid var(--border-color)' }}>
+        <div className="form-actions">
           <button type="submit" className="btn btn-primary" style={{ padding: '0.75rem 2rem' }} disabled={submitting}>
             {submitting ? 'Saving...' : 'Save Employee'}
           </button>

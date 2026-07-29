@@ -1,16 +1,13 @@
+// Home landing page with hero section and feature highlights.
 import { Link } from 'react-router-dom';
+import heroOfficeImg from '../assets/images/hero-office.jpg';
 
 const Home = () => {
   return (
     <>
       {/* ── Hero ─────────────────────────────────────────── */}
       <div className="container" style={{ paddingTop: '3rem', paddingBottom: '6rem' }}>
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: '1.2fr 0.8fr',
-          gap: '4rem',
-          alignItems: 'center',
-        }}>
+        <div className="hero-grid">
 
           {/* Left — Hero Content */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
@@ -57,16 +54,13 @@ const Home = () => {
               fontFamily: 'Inter, sans-serif',
               fontSize: '1.125rem',
               color: '#54606c',
-              lineHeight: 1.7,
-              maxWidth: '520px',
+              lineHeight: 1.6,
             }}>
-              Bring all your employee data into one simple system. Monitor performance,
-              manage tasks, and streamline HR processes to support better decisions and
-              efficient team management.
+              Seamlessly onboard, track, and optimize your team&apos;s performance with our centralized management solution.
             </p>
 
-            {/* CTA Buttons */}
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', paddingTop: '1rem' }}>
+            {/* Actions */}
+            <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
               <Link
                 to="/employees"
                 className="btn btn-primary"
@@ -87,12 +81,12 @@ const Home = () => {
                 className="btn btn-secondary"
                 style={{ padding: '1rem 2rem', fontSize: '1rem' }}
               >
-                +&nbsp; Add Employee
+                + Add Employee
               </Link>
             </div>
           </div>
 
-          {/* Right — Bento Card */}
+          {/* Right — Card */}
           <div style={{ position: 'relative' }}>
 
             {/* Decorative radial blur */}
@@ -132,12 +126,8 @@ const Home = () => {
                   zIndex: 1,
                 }} />
                 <img
-                  src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&q=80"
+                  src={heroOfficeImg}
                   alt="Corporate Office"
-                  onError={(e) => {
-                    e.target.onerror = null;
-                    e.target.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000"><rect fill="%23e7e8e9" width="1600" height="1000"/><text fill="%2354606c" font-family="sans-serif" font-size="24" x="50%" y="50%" text-anchor="middle">Image unavailable</text></svg>';
-                  }}
                   style={{
                     width: '100%',
                     height: '100%',
@@ -167,7 +157,7 @@ const Home = () => {
                     color: '#54606c',
                     fontWeight: 500,
                   }}>
-                   Example Data
+                    Example Data
                   </span>
                 </div>
 
@@ -195,9 +185,9 @@ const Home = () => {
                   paddingTop: '0.5rem',
                 }}>
                   {[
-                    { value: '92%',  label: 'Retention', accent: false },
-                    { value: '14k',  label: 'Total Employees',    accent: true  },
-                    { value: '24.6K',label: 'Tasks Completed',    accent: false },
+                    { value: '92%',   label: 'Retention',        accent: false },
+                    { value: '14k',   label: 'Total Employees',  accent: true  },
+                    { value: '24.6K', label: 'Tasks Completed',  accent: false },
                   ].map(({ value, label, accent }) => (
                     <div key={label} style={{
                       textAlign: 'center',
@@ -232,15 +222,10 @@ const Home = () => {
       </div>
 
       {/* ── Footer ───────────────────────────────────────── */}
-      <footer className="container" style={{
+      <footer className="container footer-layout" style={{
         paddingTop: '3rem',
         paddingBottom: '3rem',
-        display: 'flex',
-        flexWrap: 'wrap',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        gap: '2rem',
-        borderTop: '1px solid rgba(189,201,197,0.10)',
+        borderTop: '1px solid var(--border)',
       }}>
 
         {/* Brand + tagline */}
@@ -257,7 +242,7 @@ const Home = () => {
           <span style={{
             height: '16px',
             width: '1px',
-            backgroundColor: 'rgba(189,201,197,0.50)',
+            backgroundColor: 'var(--border)',
             display: 'inline-block',
           }} />
           <span style={{

@@ -5,9 +5,15 @@ const EMPLOYEE_API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:
 
 class EmployeeService {
 
-    // Fetch paginated list of employees with sorting
-    getEmployees(page = 0, size = 10, sortBy = 'employeeId') {
-        return axios.get(`${EMPLOYEE_API_BASE_URL}?page=${page}&size=${size}&sortBy=${sortBy}`);
+    // Fetch paginated list of employees with sorting and filtering
+    getEmployees(page = 0, size = 10, sortBy = 'employeeId', filters = {}) {
+        let url = `${EMPLOYEE_API_BASE_URL}?page=${page}&size=${size}&sortBy=${sortBy}`;
+        
+        if (filters.keyword) url += `&keyword=${encodeURIComponent(filters.keyword)}`;
+        if (filters.minSalary) url += `&minSalary=${encodeURIComponent(filters.minSalary)}`;
+        if (filters.maxSalary) url += `&maxSalary=${encodeURIComponent(filters.maxSalary)}`;
+        
+        return axios.get(url);
     }
 
     // Fetch single employee by ID

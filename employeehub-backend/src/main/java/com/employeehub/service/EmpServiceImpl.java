@@ -50,9 +50,15 @@ public class EmpServiceImpl implements EmpService {
     @Override
     public EmployeeResponseDTO readEmployee(Long id) {
         log.info("Fetching employee with ID: {}", id);
+        if (id == null) {
+            throw new IllegalArgumentException("Employee ID must not be null");
+        }
 
         EmpEntity empEntity = empRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Employee not found with ID: " + id));
+        if (empEntity == null) {
+            throw new IllegalStateException("Employee entity must not be null");
+        }
 
         EmployeeResponseDTO responseDTO = new EmployeeResponseDTO();
         BeanUtils.copyProperties(empEntity, responseDTO);
@@ -60,18 +66,22 @@ public class EmpServiceImpl implements EmpService {
     }
 
     @Override
-    public Page<EmployeeResponseDTO> readEmployees(int page, int size, String sortBy) {
-        log.info("Fetching employees - page: {}, size: {}, sortBy: {}", page, size, sortBy);
+    public Page<EmployeeResponseDTO> readEmployees(int page, int size, String sortBy, String keyword, Double minSalary, Double maxSalary) {
+        log.info("Fetching employees - page: {}, size: {}, sortBy: {}, keyword: {}", page, size, sortBy, keyword);
 
         // Fall back to a safe default if the requested sort field is not valid.
         if (!VALID_SORT_FIELDS.contains(sortBy)) {
             sortBy = "employeeId";
         }
 
-        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
-        Page<EmpEntity> empPage = empRepository.findAll(pageable);
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, sortBy));
+        
+        Page<EmpEntity> empPage = empRepository.searchAndFilter(keyword, minSalary, maxSalary, pageable);
 
         return empPage.map(empEntity -> {
+            if (empEntity == null) {
+                throw new IllegalStateException("Employee entity must not be null");
+            }
             EmployeeResponseDTO responseDTO = new EmployeeResponseDTO();
             BeanUtils.copyProperties(empEntity, responseDTO);
             return responseDTO;
@@ -81,6 +91,9 @@ public class EmpServiceImpl implements EmpService {
     @Override
     public EmployeeResponseDTO updateEmployee(Long id, EmployeeRequestDTO dto) {
         log.info("Updating employee with ID: {}", id);
+        if (id == null) {
+            throw new IllegalArgumentException("Employee ID must not be null");
+        }
 
         EmpEntity existingEmployee = empRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Employee not found with ID: " + id));
@@ -109,6 +122,9 @@ public class EmpServiceImpl implements EmpService {
     @Override
     public void deleteEmployee(Long id) {
         log.info("Deleting employee with ID: {}", id);
+        if (id == null) {
+            throw new IllegalArgumentException("Employee ID must not be null");
+        }
 
         // Throw 404 if the employee does not exist before attempting deletion.
         if (!empRepository.existsById(id)) {
