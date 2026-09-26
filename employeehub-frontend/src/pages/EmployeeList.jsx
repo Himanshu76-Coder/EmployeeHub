@@ -58,7 +58,7 @@ const EmployeeList = () => {
       }
     }
 
-    employeeService.getEmployees(pageIndex, 5, 'employeeId', {
+    employeeService.getEmployees(pageIndex, 10, 'employeeId', {
       keyword: query,
       minSalary: minSalaryFilter,
       maxSalary: maxSalaryFilter,
@@ -101,6 +101,21 @@ const EmployeeList = () => {
 
   const hasFilters = !!(query || salaryBand);
 
+  // Loading / empty state content for both table and mobile card views
+  const stateContent = loading && employees.length === 0 ? (
+    <div className="state-cell">
+      <span className="state-icon">⏳</span>
+      Loading employee data...
+    </div>
+  ) : employees.length === 0 ? (
+    <div className="state-cell">
+      <span className="state-icon">{hasFilters ? '🔍' : '📭'}</span>
+      {hasFilters
+        ? 'No employees found matching the filters.'
+        : 'No employees found. Add some to get started.'}
+    </div>
+  ) : null;
+
   return (
     <div className="container" style={{ paddingTop: '2.5rem', paddingBottom: '3rem', minHeight: 'calc(100vh - 64px)' }}>
 
@@ -116,10 +131,9 @@ const EmployeeList = () => {
 
           {/* Salary Range dropdown */}
           <select
-            className="form-select"
+            className="form-select list-filter-select"
             value={salaryBand}
             onChange={(e) => handleFilterChange('salaryBand', e.target.value)}
-            style={{ height: '40px', width: 'auto', fontSize: '0.875rem' }}
           >
             <option value="">All Salaries</option>
             <option value="0-50000">Under ₹50,000</option>
@@ -129,7 +143,7 @@ const EmployeeList = () => {
           </select>
 
           {/* Search bar */}
-          <div className="search-bar" style={{ width: '240px' }}>
+          <div className="search-bar list-search-bar">
             <span className="material-symbols-outlined">search</span>
             <input
               type="text"
@@ -142,25 +156,21 @@ const EmployeeList = () => {
           {/* Add Employee button */}
           <Link
             to="/employees/add"
-            className="btn btn-primary"
-            style={{ height: '40px', padding: '0 1.25rem' }}
+            className="btn btn-primary list-add-btn"
           >
             <span className="material-symbols-outlined" style={{ marginRight: '0.375rem', fontSize: '1.125rem' }}>add</span>
-            <span className="hide-on-mobile">Add Employee</span>
+            Add Employee
           </Link>
         </div>
       </div>
 
-      {/* Employee table */}
-      <div className="card">
-        <div
-          className="table-wrapper"
-          style={{
-            opacity: loading ? 0.55 : 1,
-            transition: 'opacity 0.2s ease-in-out',
-            pointerEvents: loading ? 'none' : 'auto',
-          }}
-        >
+      {/* ── Desktop Table (hidden on mobile) ─────────────────── */}
+      <div className="card desktop-table-view" style={{
+        opacity: loading ? 0.55 : 1,
+        transition: 'opacity 0.2s ease-in-out',
+        pointerEvents: loading ? 'none' : 'auto',
+      }}>
+        <div className="table-wrapper">
           <table className="responsive-table">
             <thead>
               <tr>
@@ -172,7 +182,6 @@ const EmployeeList = () => {
               </tr>
             </thead>
             <tbody>
-              {/* Initial load: empty employees + loading */}
               {loading && employees.length === 0 ? (
                 <tr>
                   <td colSpan="5" className="state-cell">
@@ -181,7 +190,6 @@ const EmployeeList = () => {
                   </td>
                 </tr>
               ) : employees.length === 0 ? (
-                /* Empty state */
                 <tr>
                   <td colSpan="5" className="state-cell">
                     <span className="state-icon">{hasFilters ? '🔍' : '📭'}</span>
@@ -232,14 +240,63 @@ const EmployeeList = () => {
         </div>
       </div>
 
+      {/* ── Mobile Card List (hidden on desktop) ─────────────── */}
+      <div className="mobile-card-list" style={{
+        opacity: loading ? 0.55 : 1,
+        transition: 'opacity 0.2s ease-in-out',
+        pointerEvents: loading ? 'none' : 'auto',
+      }}>
+        {stateContent ? (
+          <div className="card" style={{ padding: '0' }}>{stateContent}</div>
+        ) : (
+          employees.map(emp => (
+            <div key={emp.employeeId} className="card mobile-emp-card">
+              {/* Name + email row */}
+              <div className="mobile-emp-card-header">
+                <div>
+                  <div className="mobile-emp-name">
+                    {emp.firstName} {emp.lastName}
+                  </div>
+                  <div className="mobile-emp-email">
+                    {emp.email}
+                  </div>
+                </div>
+                <div className="mobile-emp-salary">
+                  &#8377;{emp.salary != null ? emp.salary.toLocaleString('en-IN') : '0'}
+                </div>
+              </div>
+
+              {/* Department + designation */}
+              <div className="mobile-emp-meta">
+                <span className="mobile-emp-tag">{emp.department}</span>
+                <span className="mobile-emp-tag">{emp.designation}</span>
+              </div>
+
+              {/* Actions */}
+              <div className="mobile-emp-actions">
+                <Link
+                  to={`/employees/edit/${emp.employeeId}`}
+                  className="btn btn-warning"
+                  style={{ flex: 1 }}
+                >
+                  Edit
+                </Link>
+                <button
+                  onClick={() => openDeleteModal(emp.employeeId)}
+                  className="btn btn-danger"
+                  style={{ flex: 1 }}
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+
       {/* Pagination */}
       {totalPages > 1 && (
-        <div style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginTop: '1.25rem',
-        }}>
+        <div className="pagination-bar">
           <span className="pagination-info">
             Page {currentPage + 1} of {totalPages}
           </span>

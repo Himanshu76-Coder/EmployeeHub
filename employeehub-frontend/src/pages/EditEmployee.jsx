@@ -63,7 +63,7 @@ const EditEmployee = () => {
   );
 
   return (
-    <div className="container" style={{ paddingTop: '2.5rem', paddingBottom: '3rem' }}>
+    <div className="container" style={{ paddingTop: '2.5rem', paddingBottom: '3rem', minHeight: 'calc(100vh - 64px)' }}>
 
       {/* Page header */}
       <div className="page-header">
@@ -80,7 +80,7 @@ const EditEmployee = () => {
       )}
 
       {/* Employee form */}
-      <form onSubmit={handleSubmit} className="card" style={{ padding: '2rem 2.5rem 2.5rem' }}>
+      <form onSubmit={handleSubmit} className="card form-card-mobile" style={{ padding: '2rem 2.5rem 2.5rem' }}>
         <div className="form-grid">
           <div className="form-group">
             <label>First Name</label>

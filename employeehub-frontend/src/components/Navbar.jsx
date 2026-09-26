@@ -27,16 +27,16 @@ const Navbar = () => {
           EmployeeHub
         </Link>
 
-        {/* Nav Links */}
+        {/* Nav Links — hidden on mobile via CSS */}
         <nav className="navbar-nav">
           <Link to="/" className="navbar-link">Home</Link>
           <Link to="/employees" className="navbar-link">Employees</Link>
         </nav>
 
         {/* Add Employee Button */}
-        <Link to="/employees/add" className="btn btn-primary" style={{ padding: '0.5rem 1.25rem' }}>
-          <span className="material-symbols-outlined" style={{ fontSize: '1.125rem', marginRight: '0.25rem' }}>add</span>
-          <span className="hide-on-mobile">New</span>
+        <Link to="/employees/add" className="btn btn-primary navbar-add-btn">
+          <span className="material-symbols-outlined" style={{ fontSize: '1.125rem', marginRight: '0.375rem' }}>add</span>
+          <span>New Employee</span>
         </Link>
 
       </div>

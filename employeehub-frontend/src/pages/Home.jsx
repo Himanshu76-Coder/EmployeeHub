@@ -60,7 +60,7 @@ const Home = () => {
             </p>
 
             {/* Actions */}
-            <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+            <div className="hero-actions" style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
               <Link
                 to="/employees"
                 className="btn btn-primary"

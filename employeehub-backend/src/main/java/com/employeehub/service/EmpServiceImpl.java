@@ -1,6 +1,5 @@
 package com.employeehub.service;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -37,14 +36,18 @@ public class EmpServiceImpl implements EmpService {
         }
 
         EmpEntity empEntity = new EmpEntity();
-        BeanUtils.copyProperties(dto, empEntity);
+        empEntity.setFirstName(dto.getFirstName());
+        empEntity.setLastName(dto.getLastName());
+        empEntity.setEmail(dto.getEmail());
+        empEntity.setPhoneNumber(dto.getPhoneNumber());
+        empEntity.setSalary(dto.getSalary());
+        empEntity.setDepartment(dto.getDepartment());
+        empEntity.setDesignation(dto.getDesignation());
 
         EmpEntity savedEntity = empRepository.save(empEntity);
         log.info("Employee created with ID: {}", savedEntity.getEmployeeId());
 
-        EmployeeResponseDTO responseDTO = new EmployeeResponseDTO();
-        BeanUtils.copyProperties(savedEntity, responseDTO);
-        return responseDTO;
+        return mapToResponseDTO(savedEntity);
     }
 
     @Override
@@ -56,13 +59,8 @@ public class EmpServiceImpl implements EmpService {
 
         EmpEntity empEntity = empRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Employee not found with ID: " + id));
-        if (empEntity == null) {
-            throw new IllegalStateException("Employee entity must not be null");
-        }
 
-        EmployeeResponseDTO responseDTO = new EmployeeResponseDTO();
-        BeanUtils.copyProperties(empEntity, responseDTO);
-        return responseDTO;
+        return mapToResponseDTO(empEntity);
     }
 
     @Override
@@ -78,14 +76,7 @@ public class EmpServiceImpl implements EmpService {
         
         Page<EmpEntity> empPage = empRepository.searchAndFilter(keyword, minSalary, maxSalary, pageable);
 
-        return empPage.map(empEntity -> {
-            if (empEntity == null) {
-                throw new IllegalStateException("Employee entity must not be null");
-            }
-            EmployeeResponseDTO responseDTO = new EmployeeResponseDTO();
-            BeanUtils.copyProperties(empEntity, responseDTO);
-            return responseDTO;
-        });
+        return empPage.map(this::mapToResponseDTO);
     }
 
     @Override
@@ -114,9 +105,7 @@ public class EmpServiceImpl implements EmpService {
         EmpEntity updatedEntity = empRepository.save(existingEmployee);
         log.info("Employee updated successfully with ID: {}", updatedEntity.getEmployeeId());
 
-        EmployeeResponseDTO responseDTO = new EmployeeResponseDTO();
-        BeanUtils.copyProperties(updatedEntity, responseDTO);
-        return responseDTO;
+        return mapToResponseDTO(updatedEntity);
     }
 
     @Override
@@ -133,5 +122,20 @@ public class EmpServiceImpl implements EmpService {
 
         empRepository.deleteById(id);
         log.info("Employee deleted successfully with ID: {}", id);
+    }
+
+    // Maps EmpEntity fields to EmployeeResponseDTO explicitly.
+    // Avoids reflection and eliminates JDT null-safety unchecked conversion warnings.
+    private EmployeeResponseDTO mapToResponseDTO(EmpEntity entity) {
+        EmployeeResponseDTO dto = new EmployeeResponseDTO();
+        dto.setEmployeeId(entity.getEmployeeId());
+        dto.setFirstName(entity.getFirstName());
+        dto.setLastName(entity.getLastName());
+        dto.setEmail(entity.getEmail());
+        dto.setPhoneNumber(entity.getPhoneNumber());
+        dto.setSalary(entity.getSalary());
+        dto.setDepartment(entity.getDepartment());
+        dto.setDesignation(entity.getDesignation());
+        return dto;
     }
 }

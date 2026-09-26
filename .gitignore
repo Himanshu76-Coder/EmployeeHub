@@ -24,6 +24,8 @@ logs/
 .vscode/
 .idea/
 *.iml
+.github
+.kilo
 
 ############################
 # OS FILES
